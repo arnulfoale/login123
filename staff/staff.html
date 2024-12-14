@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-container {
+            margin: 2rem auto;
+            max-width: 1200px;
+            display: flex;
+            gap: 2rem;
+        }
+        .main-content {
+            flex: 2;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .sidebar {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+        }
+        .dashboard-buttons .btn {
+            margin: 0.5rem 0;
+            border-radius: 30px;
+        }
+        .project-list {
+            margin-top: 1rem;
+        }
+        .project-item {
+            padding: 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .project-item:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Staff Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger text-white" href="../index.html">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Main Content (Staff Update Form on Left Side) -->
+        <div class="main-content">
+            <div class="dashboard-header">
+                <h1>Welcome, Staff</h1>
+                <p>View and update project details as needed</p>
+            </div>
+
+            <form id="update-project-form" class="mt-4" style="display: none;">
+                <div class="mb-3">
+                    <label for="updateProjectName" class="form-label">Update Project Name</label>
+                    <input type="text" class="form-control" id="updateProjectName" placeholder="Enter new project name">
+                </div>
+                <button type="button" class="btn btn-info w-100" onclick="updateProject()">Update Project</button>
+                <button type="button" class="btn btn-danger w-100 mt-3" onclick="markAsDone()">Mark as Done</button>
+            </form>
+        </div>
+
+        <!-- Sidebar (Projects List on Right Side) -->
+        <div class="sidebar">
+            <h3>Projects</h3>
+            <div class="project-list" id="project-list">
+                <p class="text-muted">No projects available yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedProject = '';
+
+        function loadProjects() {
+            const projectList = document.getElementById('project-list');
+            projectList.innerHTML = ''; // Clear existing projects
+
+            // Dummy projects
+            const projects = ['Project Alpha', 'Project Beta', 'Project Gamma'];
+
+            if (projects.length > 0) {
+                projects.forEach(projectName => {
+                    const projectItem = document.createElement('div');
+                    projectItem.className = 'project-item';
+                    projectItem.textContent = projectName;
+                    projectItem.setAttribute('onclick', `selectProject('${projectName}')`);
+                    projectList.appendChild(projectItem);
+                });
+            } else {
+                projectList.innerHTML = '<p class="text-muted">No projects available yet.</p>';
+            }
+        }
+
+        function selectProject(projectName) {
+            selectedProject = projectName;
+            document.getElementById('updateProjectName').value = projectName;
+            document.getElementById('update-project-form').style.display = 'block';
+        }
+
+        function updateProject() {
+            if (selectedProject === '') {
+                alert('No project selected to update.');
+                return;
+            }
+
+            const newProjectName = document.getElementById('updateProjectName').value;
+            if (newProjectName.trim() !== '') {
+                const projectList = document.getElementById('project-list');
+                const projects = projectList.getElementsByClassName('project-item');
+                for (let project of projects) {
+                    if (project.textContent === selectedProject) {
+                        project.textContent = newProjectName;
+                        project.setAttribute('onclick', `selectProject('${newProjectName}')`);
+                        selectedProject = newProjectName;
+                        break;
+                    }
+                }
+                alert('Project updated successfully.');
+                document.getElementById('update-project-form').style.display = 'none';
+            } else {
+                alert('Please enter a new project name.');
+            }
+        }
+
+        function markAsDone() {
+            if (selectedProject === '') {
+                alert('No project selected to mark as done.');
+                return;
+            }
+
+            const projectList = document.getElementById('project-list');
+            const projects = projectList.getElementsByClassName('project-item');
+            for (let project of projects) {
+                if (project.textContent === selectedProject) {
+                    project.remove();
+                    alert('Project marked as done and removed.');
+                    break;
+                }
+            }
+
+            selectedProject = ''; // Reset selected project
+            document.getElementById('update-project-form').style.display = 'none'; // Hide the update form
+        }
+
+        // Load projects on page load
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+</body>
+</html>

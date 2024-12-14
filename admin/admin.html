@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-nav .nav-item .nav-link {
+            transition: color 0.3s ease;
+        }
+        /* Hover effect for Projects link */
+        .navbar-nav .nav-item .nav-link.projects:hover {
+            color: #28a745; /* Green for Projects */
+        }
+        /* Hover effect for Staff link */
+        .navbar-nav .nav-item .nav-link.staff:hover {
+            color: #007bff; /* Blue for Staff */
+        }
+        /* Hover effect for Logout button */
+        .navbar-nav .nav-item .nav-link.logout:hover {
+            color: #dc3545; /* Red for Logout */
+        }
+        /* Create Project button hover effect */
+        .dashboard-buttons .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+        }
+        .dashboard-buttons .btn-primary:hover {
+            background: #343a40; /* Dark mode for Create Project button on hover */
+        }
+        .dashboard-container {
+            margin: 2rem auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .sidebar {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            flex: 1;
+        }
+        .main-content {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            flex: 2;
+        }
+        .dashboard-buttons .btn {
+            margin: 0.5rem 0;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .project-list, .staff-list {
+            margin-top: 1rem;
+        }
+        /* Project card styles */
+        .project-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #ffffff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .project-card .card-content {
+            flex-grow: 1;
+        }
+        .project-card .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .project-card .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+        /* Responsive tweaks for small screens */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse ms-auto" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link projects text-white" href="#" data-bs-toggle="collapse" data-bs-target="#projectsCollapse" aria-expanded="false" aria-controls="projectsCollapse">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link staff text-white" href="#" data-bs-toggle="collapse" data-bs-target="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger logout text-white" href="/index.html">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="collapse" id="projectsCollapse">
+                <h3>Projects</h3>
+                <div class="project-list" id="project-list">
+                    <p class="text-muted">No projects created yet.</p>
+                </div>
+            </div>
+
+            <div class="collapse" id="staffCollapse">
+                <h3>Staff</h3>
+                <div class="staff-list" id="staff-list">
+                    <p class="text-muted">No staff registered yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="dashboard-header">
+                <h1>Welcome, Admin</h1>
+                <p>Manage your projects and staff efficiently</p>
+            </div>
+
+            <div class="dashboard-buttons">
+                <button class="btn btn-primary btn-lg w-100" onclick="toggleProjectForm()">Create Project</button>
+            </div>
+
+            <form id="project-form" class="mt-4" style="display: none;">
+                <div class="mb-3">
+                    <label for="projectName" class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+                </div>
+                <div class="mb-3">
+                    <label for="projectLocation" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="projectLocation" placeholder="Enter project location">
+                </div>
+                <div class="mb-3">
+                    <label for="ownerName" class="form-label">Owner Name</label>
+                    <input type="text" class="form-control" id="ownerName" placeholder="Enter owner's name">
+                </div>
+                <div class="mb-3">
+                    <label for="ownerContact" class="form-label">Contact Number</label>
+                    <input type="text" class="form-control" id="ownerContact" placeholder="Enter owner's contact number">
+                </div>
+                <button type="button" class="btn btn-success w-100" onclick="addProject()">Add Project</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleProjectForm() {
+            const form = document.getElementById('project-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addProject() {
+            const projectName = document.getElementById('projectName').value;
+            const projectLocation = document.getElementById('projectLocation').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const ownerContact = document.getElementById('ownerContact').value;
+
+            if (projectName.trim() && projectLocation.trim() && ownerName.trim() && ownerContact.trim()) {
+                const projectList = document.getElementById('project-list');
+
+                // Change the text from "No projects created yet." to "Project list"
+                const projectListHeader = projectList.querySelector('p');
+                if (projectListHeader && projectListHeader.textContent === 'No projects created yet.') {
+                    projectListHeader.textContent = 'Project list';  // Update the text
+                }
+
+                // Add the new project to the list
+                const newProject = document.createElement('div');
+                newProject.className = 'project-card';
+                newProject.innerHTML = ` 
+                    <div class="card-content">
+                        <h5><strong>${projectName}</strong></h5>
+                        <p>Location: ${projectLocation}</p>
+                        <p>Owner: ${ownerName}</p>
+                        <p>Contact: ${ownerContact}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteProject(this)">Delete</button>
+                `;
+
+                projectList.appendChild(newProject);
+
+                // Clear form fields
+                document.getElementById('projectName').value = '';
+                document.getElementById('projectLocation').value = '';
+                document.getElementById('ownerName').value = '';
+                document.getElementById('ownerContact').value = '';
+
+                toggleProjectForm();
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+
+        function deleteProject(button) {
+            const projectItem = button.closest('.project-card');
+            projectItem.remove();
+        }
+    </script>
+</body>
+</html>
